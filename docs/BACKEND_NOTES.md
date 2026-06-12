@@ -1,6 +1,20 @@
 # Backend Notes — Cat Translator
 
 **Audience:** backend team
+
+## TL;DR — which APIs to use
+
+| Need | Use this API | Priority |
+|---|---|---|
+| Subscriptions / paywall | **RevenueCat** (`react-native-purchases`) — wraps StoreKit 2 + Play Billing | **Required before charging money** |
+| Translation text generation (Cat→Human phrases, People→Cat sound picks) | **Anthropic Claude API** — model `claude-opus-4-8` via `@anthropic-ai/sdk`, called from our own thin proxy endpoint (`POST /v1/translate`); `claude-haiku-4-5` is the cheaper fallback if cost matters at scale | High (the "make it feel real" upgrade) |
+| Speech-to-text (People mode voice) | **On-device**: `expo-speech-recognition` (iOS Speech framework / Android SpeechRecognizer) — free, private, no backend. Cloud fallback: OpenAI Whisper or Deepgram | Medium |
+| Real meow audio classification | **No suitable public API exists** — would require fine-tuning an audio model (YAMNet / AST); keep the on-device mock until then | Low / research |
+
+One hard rule: **the Anthropic API key must never ship inside the mobile app** — all LLM calls go through our backend proxy. Details for each row below.
+
+---
+
 **Status:** the shipped app currently has **no backend**. Everything runs on-device:
 
 | Feature | Current implementation |
