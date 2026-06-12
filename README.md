@@ -62,6 +62,10 @@ node scripts/generate-sounds.js   # synthesized cat WAVs → assets/sounds/
 node scripts/generate-icons.js    # app icon set → assets/images/
 ```
 
+## For the backend team
+
+See [docs/BACKEND_NOTES.md](docs/BACKEND_NOTES.md) — what's mocked today, which APIs to adopt (RevenueCat for subscriptions, Claude API for real translations, on-device speech-to-text), and the proposed `/v1/translate` contract.
+
 ## Project layout
 
 ```
