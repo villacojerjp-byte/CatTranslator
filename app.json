@@ -1,18 +1,23 @@
 {
   "expo": {
-    "name": "CatTranslator",
-    "slug": "CatTranslator",
+    "name": "Cat Translator",
+    "slug": "cat-translator",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "cattranslator",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "bundleIdentifier": "com.codebp.cattranslator",
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Cat Translator uses the microphone to record meows and your voice so they can be translated."
+      }
     },
     "android": {
+      "package": "com.codebp.cattranslator",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#E4EEFB",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
@@ -28,11 +33,15 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
-          "android": {
-            "image": "./assets/images/splash-icon.png",
-            "imageWidth": 76
-          }
+          "backgroundColor": "#4D7DF2",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 120
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Cat Translator uses the microphone to record meows and your voice so they can be translated."
         }
       ]
     ],

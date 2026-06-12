@@ -1,56 +1,78 @@
-# Welcome to your Expo app 👋
+# Cat Translator — Human to Pet 🐱
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native (Expo) app that "translates" between humans and cats:
 
-## Get started
+- **Cat mode** — record your cat's meow and get a human-language translation.
+- **People mode** — speak or type a message and the app answers in cat sounds.
+- **Soundboard** — 12 synthesized cat vocalizations (meows, purr, hiss, trills) on the home screen.
+- **Cat profiles** — add multiple cats with avatars, gender, age, and breed.
+- **History** — saved translations grouped by date, filterable by Cat/People.
+- Onboarding flow + paywall screen modeled after the reference design.
 
-1. Install dependencies
+All cat sounds and app icons are **procedurally generated** (see `scripts/`), so there are no licensed assets to worry about.
 
-   ```bash
-   npm install
-   ```
+## Tech stack
 
-2. Start the app
+- [Expo SDK 56](https://docs.expo.dev) / React Native 0.85 / TypeScript (strict)
+- [expo-router](https://docs.expo.dev/router/introduction/) file-based navigation (3-tab layout + modals)
+- [expo-audio](https://docs.expo.dev/versions/latest/sdk/audio/) for recording and playback
+- AsyncStorage for local persistence (cats, history, onboarding state)
 
-   ```bash
-   npx expo start
-   ```
+> **Why no Capacitor?** Capacitor wraps web apps in a native shell; React Native/Expo compiles real native UI directly. They are alternative stacks, not complementary — Expo alone produces the App Store / Play Store binaries via EAS Build.
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Run it (development)
 
 ```bash
-npm run reset-project
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Scan the QR code with the **Expo Go** app (iOS/Android), or press `a`/`i` to open an emulator/simulator. Recording requires a real device or simulator with mic access.
 
-### Other setup steps
+## Ship to the App Store
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+1. Create an [Apple Developer account](https://developer.apple.com) ($99/yr) and an [Expo account](https://expo.dev).
+2. Install EAS CLI and log in:
+   ```bash
+   npm install -g eas-cli
+   eas login
+   eas build:configure
+   ```
+3. Build a signed iOS binary in the cloud (no Mac needed):
+   ```bash
+   eas build --platform ios
+   ```
+4. Submit to App Store Connect:
+   ```bash
+   eas submit --platform ios
+   ```
 
-## Learn more
+The bundle identifier is `com.codebp.cattranslator` (change it in [app.json](app.json) if needed). Android: `eas build --platform android` / `eas submit --platform android`.
 
-To learn more about developing your project with Expo, look at the following resources:
+### Before you submit — checklist
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- [ ] **Privacy policy URL** — replace the placeholder in [src/app/settings.tsx](src/app/settings.tsx) and add it to App Store Connect.
+- [ ] **Paywall is UI-only** — the "Start" button currently just unlocks the app locally. Wire it to real in-app purchases (e.g. [RevenueCat](https://www.revenuecat.com/) or `expo-iap`) before charging money; Apple rejects subscription UI without working StoreKit purchases and a Restore button.
+- [ ] **Entertainment disclaimer** — the translation is for fun; Apple may ask you to state this in the App Store description.
 
-## Join the community
+## Regenerating assets
 
-Join our community of developers creating universal apps.
+```bash
+node scripts/generate-sounds.js   # synthesized cat WAVs → assets/sounds/
+node scripts/generate-icons.js    # app icon set → assets/images/
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Project layout
+
+```
+src/
+  app/            expo-router routes
+    (tabs)/       Home (soundboard), History, Cats
+    onboarding    3-page intro → paywall → tabs
+    translate     record → translate → save flow (Cat/People)
+    cat-form      add/edit cat + avatar picker sheet
+    settings      promo banner, terms, privacy
+  components/     pill button, segmented toggle, waveforms, play row, tiles
+  constants/      theme palette
+  lib/            store (persistence), audio, sounds, fake translation engine
+```
